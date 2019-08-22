@@ -4,7 +4,6 @@ if (file_exists('.dev')) {
 } else {
     define('DDOJO_DEV', 0);
 }
-var_dump(DDOJO_DEV);die;
 define('DDOJO_CLIENT_VERSION', '1');
 if (DDOJO_DEV) {
     define('DDOJO_BASE_URL', 'http://localhost:8000/client/v' . DDOJO_CLIENT_VERSION . '/');
