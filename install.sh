@@ -7,7 +7,7 @@ fi
 DD_HOME=~
 DD_INST="$DD_HOME/ddojo_client"
 DD_SETUP="$DD_HOME/ddojo_client/setup.sh"
-#git clone https://github.com/paralogiki/ddojo_client.git $DD_INST
+git clone https://github.com/paralogiki/ddojo_client.git $DD_INST
 if [ ! -d "$DD_INST" ]; then
 	echo "git clone failed, please try to install again"
 	exit
