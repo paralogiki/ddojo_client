@@ -10,7 +10,10 @@ if (DDOJO_DEV) {
 } else {
     define('DDOJO_BASE_URL', 'https://www.displaydojo.com/client/v' . DDOJO_CLIENT_VERSION . '/');
 }
-define('DDOJO_CLIENT_CONFIG_DIR', '/etc/ddojo/');
+if (empty($_SERVER['HOME'])) {
+    die('Unable to find SERVER[HOME]');
+}
+define('DDOJO_CLIENT_CONFIG_DIR', $_SERVER['HOME'] . '/.config/ddojo/');
 
 if (DDOJO_DEV) {
     $config = ['display_id' => 'display_test_001'];
@@ -21,7 +24,7 @@ if (DDOJO_DEV) {
     }
 
     $config = json_decode(file_get_contents($config_file), true);
-    if (!issary($config)) {
+    if (!is_array($config)) {
         die('invalid config file format');
     }
 }
