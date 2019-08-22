@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Installing required packages: git chromium-browser php"
 echo "------------------------------------------------------"
-#sudo apt-get install git chromium-browser php xdotool
+sudo apt-get install git chromium-browser php xdotool
 GIT_TEST=`which git`
 if [ "$GIT_TEST" != "/usr/bin/git" ]; then
 	echo "/usr/bin/git not found, exiting"
@@ -33,4 +33,4 @@ mkdir -p ~/.config/ddojo
 cat << EndOfHereDoc > ~/.config/ddojo/client.json
 {"display_id":"$displayid"}
 EndOfHereDoc
-echo "Setup is complete, run 'php client.php'"
+echo "Setup is complete, run 'php ~/ddojo_client/client.php'"
