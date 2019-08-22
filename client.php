@@ -47,7 +47,7 @@ foreach ($expected_keys as $key) {
 
 chdir(dirname(__FILE__));
 
-if (file_exists('launch_custom.sh')) {
+if (file_exists('launch.local.sh')) {
   exec('./launch.local.sh ' . $config_check['display_url']);
 } else {
   exec('./launch.sh ' . $config_check['display_url']);
