@@ -45,10 +45,47 @@ foreach ($expected_keys as $key) {
     }
 }
 
-chdir(dirname(__FILE__));
+$client_dir = dirname(__FILE__);
+chdir($client_dir);
+$downloads_dir = $client_dir . '/downloads';
+if (!file_exists($downloads_dir)) mkdir($downloads_dir);
+$background_file = $downloads_dir . '/bg.jpg';
+if (!file_exists($background_file)) {
+    $get = _get_remote_file($config_check['background_image'], $background_file);
+    if ($get) {
+        print sprintf('Downloaded background file to %s, setting background', $background_file) . PHP_EOL;
+        _set_background($background_file);
+    }
+} else {
+    $sha_local = sha1_file($background_file);
+    if ($config_check['background_sha1'] == $sha_local) {
+        print 'Background file has not changed.' . PHP_EOL;
+    } else {
+        print 'Background file has changed, downloading new background' . PHP_EOL;
+        $get = _get_remote_file($config_check['background_image'], $background_file);
+        if ($get) {
+            print sprintf('Downloaded NEW background file to %s, setting background', $background_file) . PHP_EOL;
+            _set_background($background_file);
+        }
+    }
+}
 
 if (file_exists('launch.local.sh')) {
   exec('./launch.local.sh ' . $config_check['display_url']);
 } else {
   exec('./launch.sh ' . $config_check['display_url']);
+}
+
+function _get_remote_file($url, $local_file) {
+    $status = file_get_contents($url);
+    if ($status !== false) {
+        $write = file_put_contents($local_file, $status);
+        if ($write !== false) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function _set_background($local_file) {
 }
