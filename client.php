@@ -84,9 +84,9 @@ if (!file_exists($background_file)) {
 }
 
 if (file_exists('launch.local.sh')) {
-  exec('./launch.local.sh ' . $config_check['display_url']);
+  exec('./launch.local.sh ' . $config_check['display_url'] . ' > /dev/null 2> /dev/null &');
 } else {
-  exec('./launch.sh ' . $config_check['display_url']);
+  exec('./launch.sh ' . $config_check['display_url'] . ' > /dev/null 2> /dev/null &');
 }
 
 function _get_remote_file($url, $local_file, $resource_context) {
