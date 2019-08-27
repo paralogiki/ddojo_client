@@ -1,6 +1,13 @@
 #!/bin/bash
 URL=$1
-if [ -z $URL ]; then
+if [ "$URL" == "local" ]; then
+	if [ -r "`pwd`/downloads/display.html" ]; then
+		URL="file://`pwd`/downloads/display.html"
+	else
+		URL="error"
+	fi
+fi
+if [ -z $URL ] || [ "$URL" == "error" ]; then
 	URL="file://`pwd`/config_error.html"
 fi
 pkill -f -- "chromium-browser"

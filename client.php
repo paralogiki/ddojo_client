@@ -83,10 +83,18 @@ if (!file_exists($background_file)) {
     }
 }
 
+$url = 'error';
+$display_html_file =  $downloads_dir . '/display.html';
+$download_display = _get_remote_file($config_check['display_url'], $display_html_file, $resource_context);
+if ($download_display === true) {
+    print sprintf('Downloaded NEW display HTML to %s', $display_html_file) . PHP_EOL;
+    $url = 'local';
+}
+
 if (file_exists('launch.local.sh')) {
-  exec('./launch.local.sh ' . $config_check['display_url'] . ' > /dev/null 2> /dev/null &');
+  exec('./launch.local.sh ' . $url . ' > /dev/null 2> /dev/null &');
 } else {
-  exec('./launch.sh ' . $config_check['display_url'] . ' > /dev/null 2> /dev/null &');
+  exec('./launch.sh ' . $url . ' > /dev/null 2> /dev/null &');
 }
 
 function _get_remote_file($url, $local_file, $resource_context) {
@@ -101,4 +109,6 @@ function _get_remote_file($url, $local_file, $resource_context) {
 }
 
 function _set_background($local_file) {
+    if (DDOJO_DEV) return;
+    exec('/usr/bin/pcmanfm -w ' . $local_file);
 }
