@@ -29,8 +29,15 @@ if [ "$displayid" = "" ]; then
 	echo "Display ID must be specified"
 	exit
 fi
+echo "------------------------------------"
+echo "Please enter your account API token:"
+read -p "Account API Token > " apitoken
+if [ "$apitoken" = "" ]; then
+	echo "Account API Token must be specified"
+	exit
+fi
 mkdir -p ~/.config/ddojo
 cat << EndOfHereDoc > ~/.config/ddojo/client.json
-{"display_id":"$displayid"}
+{"display_id":"$displayid","api_token":"$apitoken"}
 EndOfHereDoc
 echo "Setup is complete, run 'php ~/ddojo_client/client.php'"

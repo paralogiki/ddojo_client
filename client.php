@@ -16,7 +16,10 @@ if (empty($_SERVER['HOME'])) {
 define('DDOJO_CLIENT_CONFIG_DIR', $_SERVER['HOME'] . '/.config/ddojo/');
 
 if (DDOJO_DEV) {
-    $config = ['display_id' => 'display_test_001'];
+    $config = [
+        'display_id' => 'display_test_001',
+        'api_token' => 'myapitoken'
+    ];
 } else {
     $config_file = DDOJO_CLIENT_CONFIG_DIR . 'client.json';
     if (!file_exists($config_file)) {
@@ -32,8 +35,18 @@ if (DDOJO_DEV) {
 if (empty($config['display_id'])) {
     die('missing display_id from config file');
 }
+if (empty($config['api_token'])) {
+    die('api token is missing, run setup again');
+}
 
-$config_check = json_decode(file_get_contents(DDOJO_BASE_URL . 'config/' . $config['display_id']), true);
+$opts = [
+    'http' => [
+        'header' => 'X-AUTH-TOKEN: ' . $config['api_token'] . "\r\n",
+    ]
+];
+$resource_context = stream_context_create($opts);
+
+$config_check = json_decode(file_get_contents(DDOJO_BASE_URL . 'config/' . $config['display_id'], false, $resource_context), true);
 if ($config_check === false || !is_array($config_check)) {
     die('invalid config config_check file format');
 }
@@ -51,7 +64,7 @@ $downloads_dir = $client_dir . '/downloads';
 if (!file_exists($downloads_dir)) mkdir($downloads_dir);
 $background_file = $downloads_dir . '/bg.jpg';
 if (!file_exists($background_file)) {
-    $get = _get_remote_file($config_check['background_image'], $background_file);
+    $get = _get_remote_file($config_check['background_image'], $background_file, $resource_context);
     if ($get) {
         print sprintf('Downloaded background file to %s, setting background', $background_file) . PHP_EOL;
         _set_background($background_file);
@@ -62,7 +75,7 @@ if (!file_exists($background_file)) {
         print 'Background file has not changed.' . PHP_EOL;
     } else {
         print 'Background file has changed, downloading new background' . PHP_EOL;
-        $get = _get_remote_file($config_check['background_image'], $background_file);
+        $get = _get_remote_file($config_check['background_image'], $background_file, $resource_context);
         if ($get) {
             print sprintf('Downloaded NEW background file to %s, setting background', $background_file) . PHP_EOL;
             _set_background($background_file);
@@ -76,8 +89,8 @@ if (file_exists('launch.local.sh')) {
   exec('./launch.sh ' . $config_check['display_url']);
 }
 
-function _get_remote_file($url, $local_file) {
-    $status = file_get_contents($url);
+function _get_remote_file($url, $local_file, $resource_context) {
+    $status = file_get_contents($url, false, $resource_context);
     if ($status !== false) {
         $write = file_put_contents($local_file, $status);
         if ($write !== false) {
